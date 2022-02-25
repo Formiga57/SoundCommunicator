@@ -1,6 +1,25 @@
 package xyz.formiga57.soundcommunicator;
 
+import android.media.AudioAttributes;
+import android.media.AudioFormat;
+import android.media.AudioTrack;
+
 public class ToneGenerator {
+    private int _sampleRate;
+    private AudioTrack.Builder playerBuilder;
+    ToneGenerator(int sampleRate){
+        _sampleRate = sampleRate;
+        playerBuilder = new AudioTrack.Builder()
+            .setAudioAttributes(new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build())
+            .setAudioFormat(new AudioFormat.Builder()
+                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                .setSampleRate(sampleRate)
+                .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                .build());
+    }
     private byte[] GenerateTone(final float duration,final float freq,int sampleRate,int rampPercentage){
         int samples = (int)Math.ceil(duration*sampleRate);
         double[] sample = new double[samples];
@@ -31,5 +50,23 @@ public class ToneGenerator {
             // Resulting in an inverted FF FF (0xffff)
         }
         return sound;
+    }
+    public void PlayTone(float duration,float freq,int rampPercentage){
+        byte[] sound = GenerateTone(duration,freq,_sampleRate,rampPercentage);
+        AudioTrack player = playerBuilder.setBufferSizeInBytes(sound.length).build();
+        player.setNotificationMarkerPosition(sound.length/2);
+        player.setPlaybackPositionUpdateListener(new AudioTrack.OnPlaybackPositionUpdateListener() {
+            @Override
+            public void onMarkerReached(AudioTrack track) {
+               player.release(); 
+            }
+
+            @Override
+            public void onPeriodicNotification(AudioTrack track) {
+                
+            }
+        });
+        player.play();
+        player.write(sound,0,sound.length);
     }
 }
