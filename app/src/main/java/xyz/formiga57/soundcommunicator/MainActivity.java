@@ -22,10 +22,8 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener sendBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String texto = sendText.getText().toString();
-            Log.d("TEXTO",texto);
             TextModulator textModulator = new TextModulator();
-            textModulator.PlayText(texto);
+            textModulator.PlayText(sendText.getText().toString());
         }
     };
 }
