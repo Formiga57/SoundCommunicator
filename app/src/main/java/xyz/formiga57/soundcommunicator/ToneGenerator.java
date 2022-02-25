@@ -20,13 +20,16 @@ public class ToneGenerator {
                 .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
                 .build());
     }
-    private byte[] GenerateTone(final float duration,final float freq,int sampleRate,int rampPercentage){
+    private byte[] GenerateTone(final float duration,final float freq,int sampleRate,int rampPercentage,boolean useRamp){
         int samples = (int)Math.ceil(duration*sampleRate);
         double[] sample = new double[samples];
         byte[] sound = new byte[2*samples]; // We multiply the samples by 2 as each sample requires 2 bytes (short => 65536 => 256^2) 
         int ramp = samples/rampPercentage; // Creating a ramp of amplitude to reduce clicks
         int idx = 0;
         int valRamp;
+        if (!useRamp) {
+            ramp = 0;
+        }
         // Generates a sinusoid by the formula f(t)=A*sin(2*pi*frequency/λ)
         // In case, λ will be the SampleRate, as we'll need to fit the wave inside the samples
         // We also multiply everything for 32767 (Int16 max value) as the max of sin can be 1 or -1
@@ -51,8 +54,8 @@ public class ToneGenerator {
         }
         return sound;
     }
-    public void PlayTone(float duration,float freq,int rampPercentage){
-        byte[] sound = GenerateTone(duration,freq,_sampleRate,rampPercentage);
+    public void PlayTone(float duration,float freq,int rampPercentage,boolean useRamp){
+        byte[] sound = GenerateTone(duration,freq,_sampleRate,rampPercentage,useRamp);
         AudioTrack player = playerBuilder.setBufferSizeInBytes(sound.length).build();
         player.setNotificationMarkerPosition(sound.length/2);
         player.setPlaybackPositionUpdateListener(new AudioTrack.OnPlaybackPositionUpdateListener() {

@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Sound Communicator</string>
+    <string name="send">Send</string>
 </resources>
