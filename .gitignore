@@ -7,9 +7,16 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+/app/build
+/app/debug
+/app/release
+/app/.gitignore
+/app/build.gradle
+/app/proguard-rules.pro
